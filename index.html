@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>360 Video Branching - 4K</title>
+    <title>360 Video Branching - Toggle</title>
     <style>
         * {
             margin: 0;
@@ -44,15 +44,18 @@
             z-index: 1;
         }
 
-            .buttons button {
-                padding: 15px 25px;
-                font-size: 1.2em;
-                background: rgba(255, 255, 255, 0.85);
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-                transition: background 0.3s ease;
-            }
+.buttons button {
+  min-width: 180px;
+  padding: 15px 25px;
+  font-size: 1.2em;
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-align: center;
+}
+
 
                 .buttons button:hover {
                     background: rgba(255, 255, 255, 1);
@@ -64,8 +67,8 @@
         <div id="ytplayer"></div>
 
         <div class="buttons">
-            <button onclick="choosePath('A')">Explore Path A</button>
-            <button onclick="choosePath('B')">Explore Path B</button>
+            <button id="pathAButton" onclick="togglePath()">Explore Path A</button>
+            <button onclick="alert('Path B selected — coming soon!')">Explore Path B</button>
         </div>
     </div>
 
@@ -73,38 +76,54 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let player;
+        let isAtHome = true;
+
+        const videoHome = 'OhcEUc0_sk4'; // Start video
+        const videoPathA = '4j0vSIAMSeo'; // Path A video
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('ytplayer', {
-                videoId: 'OhcEUc0_sk4', // Initial 360 video
+                videoId: videoHome,
                 playerVars: {
                     autoplay: 1,
-                    controls: 0,
-                    modestbranding: 0,
+                    controls: 0,        // Hide UI controls
+                    disablekb: 0,       // Allow keyboard input
+                    modestbranding: 1,
                     rel: 0,
                     fs: 1,
-                    disablekb: 0,
                     iv_load_policy: 3,
                     playsinline: 1
                 },
                 events: {
                     onReady: (event) => {
-                        event.target.setPlaybackQuality('hd2160'); // Request 4K
+                        event.target.setPlaybackQuality('hd2160');
                         event.target.playVideo();
                     }
                 }
             });
         }
 
-        function choosePath(path) {
-            if (path === 'A') {
+        function togglePath() {
+            const button = document.getElementById('pathAButton');
+
+            if (isAtHome) {
+                // Go to Path A video
                 player.loadVideoById({
-                    videoId: '4j0vSIAMSeo', // Path A video
+                    videoId: videoPathA,
                     startSeconds: 0,
-                    suggestedQuality: 'hd2160' // Request 4K
+                    suggestedQuality: 'hd2160'
                 });
-            } else if (path === 'B') {
-                alert('Path B selected — you can link another video here!');
+                button.textContent = 'Back Home';
+                isAtHome = false;
+            } else {
+                // Go back to Home video
+                player.loadVideoById({
+                    videoId: videoHome,
+                    startSeconds: 0,
+                    suggestedQuality: 'hd2160'
+                });
+                button.textContent = 'Explore Path A';
+                isAtHome = true;
             }
         }
     </script>
