@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>360 Video Branching - Toggle</title>
+    <title>MTN Training Solutions</title>
     <style>
         * {
             margin: 0;
@@ -13,38 +13,50 @@
 
         html, body {
             height: 100%;
-            width: 100%;
-            background: #000;
             font-family: sans-serif;
+            background: #000;
+            color: #fff;
         }
 
-        .container {
-            position: relative;
+        .screen {
+            display: none;
             height: 100vh;
             width: 100vw;
-            overflow: hidden;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
         }
 
-        #ytplayer {
+        .active {
+            display: flex;
+        }
+
+        button {
+            margin: 15px;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            button:hover {
+                background: white;
+            }
+
+        #ytplayer, #ytplayerPractice {
+            width: 100%;
+            height: 100%;
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
             z-index: 0;
-        }
-
-        #overlayBlocker {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            opacity: 1;
-            z-index: 1;
-            display: none;
-            pointer-events: none; /* Keeps buttons clickable */
         }
 
         .buttons {
@@ -52,136 +64,208 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 10;
             display: flex;
             gap: 20px;
-            z-index: 2;
         }
 
-            .buttons button {
-                min-width: 180px;
-                padding: 15px 25px;
-                font-size: 1.2em;
-                background: rgba(255, 255, 255, 0.85);
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-                transition: background 0.3s ease;
-                text-align: center;
-            }
-
-                .buttons button:hover {
-                    background: rgba(255, 255, 255, 1);
-                }
-
-        #endMessage {
+        #eapButton {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
+            bottom: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            background: red;
             color: white;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            font-size: 1.1em;
+            border-radius: 50%;
+            display: none;
+            z-index: 10;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0;
+            border: 4px solid white;
+            box-sizing: border-box;
+        }
+
+
+
+
+        #endSummary {
+            z-index: 20;
+            background: black;
             padding: 30px;
-            border-radius: 10px;
             text-align: center;
             display: none;
-            z-index: 3;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
-            #endMessage button {
-                margin-top: 10px;
-                padding: 10px 20px;
-                font-size: 1em;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
+            #endSummary p {
+                font-size: 1.2em;
+                margin-bottom: 20px;
+            }
+
+            #endSummary button {
+                margin: 10px;
             }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <!-- Black overlay to block suggestions -->
-        <div id="overlayBlocker"></div>
 
-        <!-- YouTube video -->
+    <!-- Splash -->
+    <div id="splash" class="screen active">
+        <h1>Welcome to MTN Training Solutions</h1>
+        <br />
+        <p>Your lifeguard situational training simulation begins here.</p>
+        <br />
+        <button onclick="goToScreen('zoneIntro')">Start Training</button>
+    </div>
+
+    <!-- Zone Introduction -->
+    <div id="zoneIntro" class="screen">
+        <h2>Get To Know Your Zone</h2>
+        <p style="max-width: 700px; margin: 20px auto;">
+            You will be responsible for scanning this zone of protection.
+            Take a good look around.<br><br />
+            <strong>On A Computer:</strong> Use <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> or your mouse/trackpad.<br><br />
+            <strong>On A Touchscreen:</strong> Use your finger to swipe.<br><br>
+            Make sure you're comfortable with your zone and all pool features.
+        </p>
+      
+        <button onclick="startIntroVideo()">View My Zone</button>
+    </div>
+
+    <!-- Intro Video -->
+    <div id="intro" class="screen">
         <div id="ytplayer"></div>
-
-        <!-- Buttons -->
         <div class="buttons">
-            <button id="pathAButton" onclick="togglePath()">Explore Path A</button>
-            <button onclick="alert('Path B selected — coming soon!')">Explore Path B</button>
+            <button onclick="goToScreen('practiceInstructions')">Proceed to Practice</button>
         </div>
+    </div>
 
-        <!-- End message -->
-        <div id="endMessage">
-            <p>The video has ended.</p>
-            <button onclick="replayVideo()">Replay</button>
+    <!-- Practice Instructions -->
+    <div id="practiceInstructions" class="screen">
+        <h2>Practice Session</h2>
+        <br /><br />
+        <h3><strong><u>SCENARIO</u></strong></h3>
+        <br />
+        <p>
+            You are the lifeguard on duty,
+            proactively scan your Zone of Protection.<br /><br />
+            If you recognize a guest in distress, activate your Emergency Action Plan (EAP)<br />
+            by pressing the <strong style="color: red;">RED EAP button</strong> located at the bottom left of the screen.
+        </p>
+
+        <button onclick="startPracticeVideo()">Start Practice Session</button>
+    </div>
+
+    <!-- Practice Video -->
+    <div id="practice" class="screen">
+        <div id="ytplayerPractice"></div>
+        <button id="eapButton" onclick="eapPressed()">EAP</button>
+        <div id="endSummary">
+            <h2>Session Complete</h2>
+            <p id="scoreText">You activated your EAP X times.<br> There were actualy Y Guest In Distress.</p>
+            <br />
+            <h3>Remember: IF YOU DON"T KNOW GO!"</h3>
+            <br />
+            <button onclick="restartPractice()">Restart Practice</button>
+            <button onclick="goToScreen('splash')">Return to Menu</button>
         </div>
     </div>
 
     <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let player;
-        let isAtHome = true;
+        let introPlayer, practicePlayer;
+        let eapCount = 0;
+        const actualDistressCount = 5;
 
-        const videoHome = 'OhcEUc0_sk4';
-        const videoPathA = '4j0vSIAMSeo';
+        const videoMap = {
+            "MTN-P01-A1-V-01": "OhcEUc0_sk4",    // Intro video
+            "MTN-P01-A2-E-01": "x5hzY2lDcM8"     // Practice evaluation video
+        };
+
+        function goToScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+
+            if (introPlayer) introPlayer.stopVideo?.();
+            if (practicePlayer) practicePlayer.stopVideo?.();
+
+            document.getElementById('eapButton').style.display = 'none';
+            document.getElementById('endSummary').style.display = 'none';
+        }
+
+        function startIntroVideo() {
+            goToScreen('intro');
+            introPlayer.seekTo(0);
+            introPlayer.playVideo();
+        }
+
+        function startPracticeVideo() {
+            goToScreen('practice');
+            eapCount = 0;
+            document.getElementById('scoreText').textContent = '';
+            practicePlayer.seekTo(0);
+            practicePlayer.playVideo();
+        }
+
+        function eapPressed() {
+            eapCount++;
+            console.log('EAP pressed: ' + eapCount);
+        }
+
+        function handlePracticeState(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                document.getElementById('eapButton').style.display = 'block';
+            }
+
+            if (event.data === YT.PlayerState.ENDED) {
+                document.getElementById('eapButton').style.display = 'none';
+                const scoreText = `You pressed the EAP button ${eapCount} time${eapCount !== 1 ? 's' : ''}.
+            There were actually ${actualDistressCount} Guest In Distress.`;
+                document.getElementById('scoreText').textContent = scoreText;
+                document.getElementById('endSummary').style.display = 'flex';
+            }
+        }
+
+        function restartPractice() {
+            startPracticeVideo();
+        }
 
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('ytplayer', {
-                videoId: videoHome,
+            introPlayer = new YT.Player('ytplayer', {
+                videoId: videoMap["MTN-P01-A1-V-01"],
                 playerVars: {
-                    autoplay: 1,
-                    controls: 0,
-                    disablekb: 0,
-                    modestbranding: 1,
-                    rel: 0,
-                    fs: 1,
-                    iv_load_policy: 3,
-                    playsinline: 1
-                },
-                events: {
-                    onReady: (event) => {
-                        event.target.setPlaybackQuality('hd2160');
-                        event.target.playVideo();
-                    },
-                    onStateChange: handleVideoState
+                    autoplay: 0, controls: 0, rel: 0, fs: 1,
+                    modestbranding: 1, playsinline: 1, disablekb: 0, iv_load_policy: 3
                 }
             });
-        }
 
-        function handleVideoState(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                document.getElementById('endMessage').style.display = 'block';
-                document.getElementById('overlayBlocker').style.display = 'block';
-            }
-        }
-
-        function togglePath() {
-            const button = document.getElementById('pathAButton');
-            const message = document.getElementById('endMessage');
-            const overlay = document.getElementById('overlayBlocker');
-
-            if (isAtHome) {
-                player.loadVideoById({ videoId: videoPathA, startSeconds: 0, suggestedQuality: 'hd2160' });
-                button.textContent = 'Back Home';
-                isAtHome = false;
-            } else {
-                player.loadVideoById({ videoId: videoHome, startSeconds: 0, suggestedQuality: 'hd2160' });
-                button.textContent = 'Explore Path A';
-                isAtHome = true;
-            }
-
-            message.style.display = 'none';
-            overlay.style.display = 'none';
-        }
-
-        function replayVideo() {
-            document.getElementById('endMessage').style.display = 'none';
-            document.getElementById('overlayBlocker').style.display = 'none';
-            player.seekTo(0);
-            player.playVideo();
+            practicePlayer = new YT.Player('ytplayerPractice', {
+                videoId: videoMap["MTN-P01-A2-E-01"],
+                playerVars: {
+                    autoplay: 0, controls: 0, rel: 0, fs: 1,
+                    modestbranding: 1, playsinline: 1, disablekb: 0, iv_load_policy: 3
+                },
+                events: {
+                    onStateChange: handlePracticeState
+                }
+            });
         }
     </script>
 </body>
