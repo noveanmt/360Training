@@ -144,7 +144,7 @@
             <strong>On A Touchscreen:</strong> Use your finger to swipe.<br><br>
             Make sure you're comfortable with your zone and all pool features.
         </p>
-      
+
         <button onclick="startIntroVideo()">View My Zone</button>
     </div>
 
@@ -188,6 +188,9 @@
         </div>
     </div>
 
+    <audio id="eapAudio" src="MTN-Activate-EAP.mp3" preload="auto"></audio>
+
+
     <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
@@ -228,7 +231,14 @@
         function eapPressed() {
             eapCount++;
             console.log('EAP pressed: ' + eapCount);
+
+            // Play the EAP activation sound
+            var audio = document.getElementById('eapAudio');
+            audio.currentTime = 0; // Rewind to start
+            audio.volume = 1.0; // Max volume
+            audio.play();
         }
+
 
         function handlePracticeState(event) {
             if (event.data === YT.PlayerState.PLAYING) {
@@ -238,7 +248,7 @@
             if (event.data === YT.PlayerState.ENDED) {
                 document.getElementById('eapButton').style.display = 'none';
                 const scoreText = `You pressed the EAP button ${eapCount} time${eapCount !== 1 ? 's' : ''}.
-            There were actually ${actualDistressCount} Guest In Distress.`;
+                There were actually ${actualDistressCount} Guest In Distress.`;
                 document.getElementById('scoreText').textContent = scoreText;
                 document.getElementById('endSummary').style.display = 'flex';
             }
