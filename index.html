@@ -159,7 +159,7 @@
     <!-- Practice Instructions -->
     <div id="practiceInstructions" class="screen">
         <h2>Practice Session</h2>
-        <br /><br />
+        <br />
         <h3><strong><u>SCENARIO</u></strong></h3>
         <br />
         <p>
@@ -178,9 +178,10 @@
         <button id="eapButton" onclick="eapPressed()">EAP</button>
         <div id="endSummary">
             <h2>Session Complete</h2>
-            <p id="scoreText">You activated your EAP X times.<br> There were actualy Y Guest In Distress.</p>
             <br />
-            <h3>Remember: IF YOU DON"T KNOW GO!"</h3>
+            <p id="scoreText">You activated your EAP <strong><u>X</u></strong> times. There were actualy <strong><u>Y</u></strong> Guest In Distress.</p>
+            <br />
+            <h3>Remember: <strong style="color:red;">IF YOU DON"T KNOW GO!</strong></h3>
             <br />
             <button onclick="restartPractice()">Restart Practice</button>
             <button onclick="goToScreen('splash')">Return to Menu</button>
