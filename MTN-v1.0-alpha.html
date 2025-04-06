@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>360 Video Branching - Toggle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background: #000;
+            font-family: sans-serif;
+        }
+
+        .container {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        #ytplayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        #overlayBlocker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 1;
+            z-index: 1;
+            display: none;
+            pointer-events: none; /* Keeps buttons clickable */
+        }
+
+        .buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 2;
+        }
+
+            .buttons button {
+                min-width: 180px;
+                padding: 15px 25px;
+                font-size: 1.2em;
+                background: rgba(255, 255, 255, 0.85);
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+                text-align: center;
+            }
+
+                .buttons button:hover {
+                    background: rgba(255, 255, 255, 1);
+                }
+
+        #endMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 3;
+        }
+
+            #endMessage button {
+                margin-top: 10px;
+                padding: 10px 20px;
+                font-size: 1em;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Black overlay to block suggestions -->
+        <div id="overlayBlocker"></div>
+
+        <!-- YouTube video -->
+        <div id="ytplayer"></div>
+
+        <!-- Buttons -->
+        <div class="buttons">
+            <button id="pathAButton" onclick="togglePath()">Explore Path A</button>
+            <button onclick="alert('Path B selected — coming soon!')">Explore Path B</button>
+        </div>
+
+        <!-- End message -->
+        <div id="endMessage">
+            <p>The video has ended.</p>
+            <button onclick="replayVideo()">Replay</button>
+        </div>
+    </div>
+
+    <!-- YouTube API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let player;
+        let isAtHome = true;
+
+        const videoHome = 'OhcEUc0_sk4';
+        const videoPathA = '4j0vSIAMSeo';
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('ytplayer', {
+                videoId: videoHome,
+                playerVars: {
+                    autoplay: 1,
+                    controls: 0,
+                    disablekb: 0,
+                    modestbranding: 1,
+                    rel: 0,
+                    fs: 1,
+                    iv_load_policy: 3,
+                    playsinline: 1
+                },
+                events: {
+                    onReady: (event) => {
+                        event.target.setPlaybackQuality('hd2160');
+                        event.target.playVideo();
+                    },
+                    onStateChange: handleVideoState
+                }
+            });
+        }
+
+        function handleVideoState(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                document.getElementById('endMessage').style.display = 'block';
+                document.getElementById('overlayBlocker').style.display = 'block';
+            }
+        }
+
+        function togglePath() {
+            const button = document.getElementById('pathAButton');
+            const message = document.getElementById('endMessage');
+            const overlay = document.getElementById('overlayBlocker');
+
+            if (isAtHome) {
+                player.loadVideoById({ videoId: videoPathA, startSeconds: 0, suggestedQuality: 'hd2160' });
+                button.textContent = 'Back Home';
+                isAtHome = false;
+            } else {
+                player.loadVideoById({ videoId: videoHome, startSeconds: 0, suggestedQuality: 'hd2160' });
+                button.textContent = 'Explore Path A';
+                isAtHome = true;
+            }
+
+            message.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        function replayVideo() {
+            document.getElementById('endMessage').style.display = 'none';
+            document.getElementById('overlayBlocker').style.display = 'none';
+            player.seekTo(0);
+            player.playVideo();
+        }
+    </script>
+</body>
+</html>
