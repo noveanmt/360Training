@@ -192,8 +192,13 @@
 
 
     <!-- YouTube API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script>
+        <script>
+        // Load the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
         let introPlayer, practicePlayer;
         let eapCount = 0;
         const actualDistressCount = 5;
@@ -203,25 +208,35 @@
             "MTN-P01-A2-E-01": "x5hzY2lDcM8"     // Practice evaluation video
         };
 
-                function onYouTubeIframeAPIReady() {
-            player = new YT.Player('ytplayer', {
-                videoId: videoHome,
+        function onYouTubeIframeAPIReady() {
+            introPlayer = new YT.Player('ytplayer', {
+                height: '2160', // Set player height to suggest 4K quality
+                width: '3840',  // Set player width to suggest 4K quality
+                videoId: videoMap["MTN-P01-A1-V-01"],
                 playerVars: {
-                    autoplay: 1,
-                    controls: 0,
-                    disablekb: 0,
-                    modestbranding: 1,
-                    rel: 0,
-                    fs: 1,
-                    iv_load_policy: 3,
-                    playsinline: 1
+                    autoplay: 0, controls: 0, rel: 0, fs: 1,
+                    modestbranding: 1, playsinline: 1, disablekb: 0, iv_load_policy: 3
                 },
                 events: {
-                    onReady: (event) => {
-                        event.target.setPlaybackQuality('hd2160');
-                        event.target.playVideo();
+                    'onReady': (event) => {
+                        event.target.setPlaybackQuality('hd2160'); // Suggest 4K quality
+                    }
+                }
+            });
+
+            practicePlayer = new YT.Player('ytplayerPractice', {
+                height: '2160', // Set player height to suggest 4K quality
+                width: '3840',  // Set player width to suggest 4K quality
+                videoId: videoMap["MTN-P01-A2-E-01"],
+                playerVars: {
+                    autoplay: 0, controls: 0, rel: 0, fs: 1,
+                    modestbranding: 1, playsinline: 1, disablekb: 0, iv_load_policy: 3
+                },
+                events: {
+                    'onReady': (event) => {
+                        event.target.setPlaybackQuality('hd2160'); // Suggest 4K quality
                     },
-                    onStateChange: handleVideoState
+                    'onStateChange': handlePracticeState
                 }
             });
         }
@@ -257,11 +272,15 @@
 
             // Play the EAP activation sound
             var audio = document.getElementById('eapAudio');
-            audio.currentTime = 0; // Rewind to start
-            audio.volume = 1.0; // Max volume
-            audio.play();
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0; // Rewind to start
+                audio.volume = 1.0; // Max volume
+                audio.play().catch(error => console.error('Audio playback failed:', error));
+            } else {
+                console.error('eapAudio element not found');
+            }
         }
-
 
         function handlePracticeState(event) {
             if (event.data === YT.PlayerState.PLAYING) {
@@ -270,36 +289,15 @@
 
             if (event.data === YT.PlayerState.ENDED) {
                 document.getElementById('eapButton').style.display = 'none';
-                const scoreText = `You pressed the EAP button ${eapCount} time${eapCount !== 1 ? 's' : ''}.
-                There were actually ${actualDistressCount} Guest In Distress.`;
-                document.getElementById('scoreText').textContent = scoreText;
+                const scoreText = `You pressed the EAP button <b><u>${eapCount}</u></b> time${eapCount !== 1 ? 's' : ''}.<br>
+        There were actually <b><u>${actualDistressCount}</u></b> Guest In Distress.`;
+                document.getElementById('scoreText').innerHTML = scoreText;
                 document.getElementById('endSummary').style.display = 'flex';
             }
         }
 
         function restartPractice() {
             startPracticeVideo();
-        }
-
-        function onYouTubeIframeAPIReady() {
-            introPlayer = new YT.Player('ytplayer', {
-                videoId: videoMap["MTN-P01-A1-V-01"],
-                playerVars: {
-                    autoplay: 0, controls: 0, rel: 0, fs: 1,
-                    modestbranding: 1, playsinline: 1, disablekb: 0, iv_load_policy: 3
-                }
-            });
-
-            practicePlayer = new YT.Player('ytplayerPractice', {
-                videoId: videoMap["MTN-P01-A2-E-01"],
-                playerVars: {
-                    autoplay: 0, controls: 0, rel: 0, fs: 1,
-                    modestbranding: 1, playsinline: 1, disablekb: 0, iv_load_policy: 3
-                },
-                events: {
-                    onStateChange: handlePracticeState
-                }
-            });
         }
     </script>
 </body>
