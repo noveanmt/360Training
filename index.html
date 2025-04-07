@@ -203,6 +203,29 @@
             "MTN-P01-A2-E-01": "x5hzY2lDcM8"     // Practice evaluation video
         };
 
+                function onYouTubeIframeAPIReady() {
+            player = new YT.Player('ytplayer', {
+                videoId: videoHome,
+                playerVars: {
+                    autoplay: 1,
+                    controls: 0,
+                    disablekb: 0,
+                    modestbranding: 1,
+                    rel: 0,
+                    fs: 1,
+                    iv_load_policy: 3,
+                    playsinline: 1
+                },
+                events: {
+                    onReady: (event) => {
+                        event.target.setPlaybackQuality('hd2160');
+                        event.target.playVideo();
+                    },
+                    onStateChange: handleVideoState
+                }
+            });
+        }
+
         function goToScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
