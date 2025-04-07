@@ -287,14 +287,15 @@
                 document.getElementById('eapButton').style.display = 'block';
             }
 
-            if (event.data === YT.PlayerState.ENDED) {
-                document.getElementById('eapButton').style.display = 'none';
-                const scoreText = `You pressed the EAP button <b><u>${eapCount}</u></b> time${eapCount !== 1 ? 's' : ''}.<br>
-        There were actually <b><u>${actualDistressCount}</u></b> Guest In Distress.`;
-                document.getElementById('scoreText').innerHTML = scoreText;
-                document.getElementById('endSummary').style.display = 'flex';
-            }
+                   if (event.data === YT.PlayerState.ENDED) {
+            document.getElementById('eapButton').style.display = 'none';
+            const scoreText = `You pressed the EAP button <b><u style="color: ${eapCount < 5 ? 'red' : 'green'};">${eapCount}</u></b> time${eapCount !== 1 ? 's' : ''}.
+            There were actually <b><u style="color: ${actualDistressCount};">${actualDistressCount}</u></b> Guest In Distress.`;
+
+            document.getElementById('scoreText').innerHTML = scoreText;
+            document.getElementById('endSummary').style.display = 'flex';
         }
+    }
 
         function restartPractice() {
             startPracticeVideo();
